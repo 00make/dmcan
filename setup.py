@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
 
-with open("README.rst", "r", encoding="utf-8") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
     name="dmcan",
-    version="0.1.2",
+    version="0.1.3",
     author="达妙智能控制",
-    author_email="support@dmrobot.com", 
+    author_email="support@dmrobot.com",
     description="用于控制DM系列电机的Python库",
     long_description=long_description,
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     url="https://github.com/00make/dmcan",
     packages=find_packages(),
     classifiers=[

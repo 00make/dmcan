@@ -5,9 +5,7 @@ name: Build and Publish Package to TestPyPi
 
 # This workflow will run when a PR is merged or when a commit is made directly to the master branch.
 # ref: https://github.community/t/trigger-workflow-only-on-pull-request-merge/17359/3
-on:
-  push:
-    branches: [ master ]
+on: push
 
 jobs:
   build-and-publish:

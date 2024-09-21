@@ -1,6 +1,5 @@
 import math
-from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
-
+from dmcan import *
 import serial
 import time
 
@@ -54,13 +53,13 @@ i = 0
 while i < 10000:
     q = math.sin(time.time())
     i = i + 1
-    
+
     # 控制Motor1的位置和速度
     MotorControl1.control_Pos_Vel(Motor1, q*8, 30)
-    
+
     # 控制Motor2的速度
     MotorControl1.control_Vel(Motor2, 8*q)
-    
+
     time.sleep(0.001)
 
 # 关闭串口

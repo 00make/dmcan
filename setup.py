@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="dmcan",
-    version="0.1.3.1",
+    version="0.1.3.2",
     author="达妙智能控制",
     author_email="support@dmrobot.com",
     description="用于控制DM系列电机的Python库",

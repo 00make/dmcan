@@ -1,3 +1,4 @@
+import scipy.signal
 import time
 from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
 import serial
@@ -18,8 +19,8 @@ Constants:
     note_to_frequency (dict): A dictionary mapping musical notes to their corresponding frequencies.
     notes (list): A list of musical notes representing the melody of "Twinkle Twinkle Little Star".
     durations (list): A list of durations for each note in the melody.
-    x_speed (float): A multiplier for the speed of the motor.
 
+    
 Variables:
     serial_device (serial.Serial): The serial communication interface.
     motor (Motor): The motor object.
@@ -80,13 +81,11 @@ if motor_control.switchControlMode(motor, Control_Type.VEL):
 motor_control.set_zero_position(motor)
 motor_control.enable(motor)
 
-# Speed multiplier
-x_speed = 0.001
 
 
 # Play the melody
 for note, duration in zip(notes, durations):
-    speed = hz_to_timems(note_to_frequency[note])
+    speed = hz_to_timems(note_to_frequency[note])*6
     print(f"Note: {note}, Speed: {speed}, Duration: {duration}")
     motor_control.control_Vel(motor, speed)
     time.sleep(duration)

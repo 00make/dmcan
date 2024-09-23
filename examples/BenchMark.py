@@ -15,6 +15,8 @@ motor_control = MotorControl(serial_device)
 
 # 添加电机到控制对象
 motor_control.addMotor(Motor1)
+max_speed = 0
+max_torque = 0
 
 num_iterations = 30000  # 迭代次数
 
@@ -29,8 +31,8 @@ def max_speed_test():
     # 最大速度测试模式
     print("开始最大速度测试模式")
     motor_control.enable(Motor1)
-
     max_speed = 0
+
     for i in range(num_iterations):
         speed = (i / num_iterations) * 30  # 速度缓慢抬升到100
         motor_control.control_Vel(Motor1, speed)
@@ -38,40 +40,59 @@ def max_speed_test():
         current_speed = Motor1.getVelocity()
         if current_speed > max_speed:
             max_speed = current_speed
-        time.sleep(0.001)
+
     time.sleep(0.01)
     motor_control.disable(Motor1)
     print(f"最大速度: {max_speed} rad/s")
+    return max_speed
 
 
 def max_torque_test():
 
-    # 切换到MIT控制模式
-    if motor_control.switchControlMode(Motor1, Control_Type.MIT):
-        print("切换到MIT控制模式成功")
+    # 切换到速度控制模式
+    if motor_control.switchControlMode(Motor1, Control_Type.VEL):
+        print("切换到速度控制模式成功")
     else:
-        print("切换到MIT控制模式失败")
+        print("切换到速度控制模式失败")
 
     # 最大力矩测试模式
     print("开始最大力矩测试模式")
     motor_control.enable(Motor1)
-
     max_torque = 0
-    kp = 10  # 假设位置增益为10
-    kd = 1   # 假设速度增益为1
+    # 缓慢爬升到最大速度
     for i in range(num_iterations):
-        q = 0  # 假设期望位置为0
-        dq = 0  # 假设期望速度为0
-        tau = 0  # 假设30是测试力矩
-        motor_control.controlMIT(Motor1, kp, kd, q, dq, tau)
-        current_torque = Motor1.getTorque()
-        if current_torque > max_torque:
-            max_torque = current_torque
+        speed = (i / num_iterations) * max_speed  # 速度缓慢抬升到最大
+        motor_control.control_Vel(Motor1, speed)
+        motor_control.refresh_motor_status(Motor1)
+    
+    # 测量最大力矩
+    time.sleep(0.001)
+    current_torque = Motor1.getTorque()
+    if current_torque > max_torque:
+        max_torque = current_torque
+    # 测量最大力矩
+    time.sleep(0.001)
+    current_torque = Motor1.getTorque()
+    if current_torque > max_torque:
+        max_torque = current_torque
+    # 突然反向刹车
+    motor_control.control_Vel(Motor1, -max_speed)
+    # 测量最大力矩
+    time.sleep(0.001)
+    current_torque = Motor1.getTorque()
+    if current_torque > max_torque:
+        max_torque = current_torque
+    # 测量最大力矩
+    time.sleep(0.001)
+    current_torque = Motor1.getTorque()
+    if current_torque > max_torque:
+        max_torque = current_torque
 
     print(f"最大力矩: {max_torque} Nm")
     time.sleep(0.01)
 
     motor_control.disable(Motor1)
+    return max_torque
 
 
 def feedback_frequency_test():
@@ -108,7 +129,7 @@ def feedback_frequency_test():
 
 while True:
     print("\n请选择电机测试模式（部分功能需要更新固件到 5015 以上）:")
-    print("\n为了测试安全请确保电机固定在一个位置，不要有任何负载。")
+    print("为了测试安全请确保电机固定在一个位置，不要有任何负载。")
     print("1. 反馈频率")
     print("2. 最大速度")
     # print("3. 最大力矩")
@@ -119,9 +140,9 @@ while True:
     if choice == '1':
         feedback_frequency_test()
     elif choice == '2':
-        max_speed_test()
+        max_speed = max_speed_test()
     elif choice == '3':
-        max_torque_test()
+        max_torque = max_torque_test()
     elif choice == '4':
         break
     else:

@@ -1,6 +1,10 @@
 import time
 from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
 import serial
+import wave
+import numpy as np
+import pydub
+from pydub.playback import play
 
 """
 This script controls a motor to play the melody of "Twinkle Twinkle Little Star" using a serial communication interface.
@@ -43,9 +47,11 @@ note_to_frequency = {
     'C5': 523.25
 }
 
+
 def hz_to_timems(hz):
     """Converts frequency in Hz to time in ms."""
-    return (float(hz) + 137.85) / 125.438
+    return (float(hz) + 137.85) / 125.438-0.1
+
 
 # Example usage
 hz = 440.00  # A4 note
@@ -58,7 +64,8 @@ notes = ['C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4',
 durations = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1]
 
 # Initialize serial communication
-serial_device = serial.Serial('/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
+serial_device = serial.Serial(
+    '/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
 
 # Initialize motor and motor control
 motor = Motor(DM_Motor_Type.DM4310, 0x02, 0x22)
@@ -75,6 +82,7 @@ motor_control.enable(motor)
 
 # Speed multiplier
 x_speed = 0.001
+
 
 # Play the melody
 for note, duration in zip(notes, durations):

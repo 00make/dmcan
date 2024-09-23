@@ -4,11 +4,11 @@ import serial
 import time
 
 # 创建两个电机对象
-Motor1 = Motor(DM_Motor_Type.DM4310, 0x01, 0x11)
+Motor1 = Motor(DM_Motor_Type.DM4310, 0x09, 0x99)
 Motor2 = Motor(DM_Motor_Type.DM4310, 0x05, 0x15)
 
 # 初始化串口通信
-serial_device = serial.Serial('COM8', 921600, timeout=0.5)
+serial_device = serial.Serial('/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
 
 # 创建电机控制对象
 MotorControl1 = MotorControl(serial_device)

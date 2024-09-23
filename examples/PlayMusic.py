@@ -29,7 +29,7 @@ Execution:
     3. Plays the melody by controlling the motor's position and speed according to the notes and durations.
     4. Disables the motor and closes the serial communication interface.
 """
-from dmcan import *
+from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
 import serial
 
 # 音符与速度映射
@@ -54,10 +54,10 @@ x_duration = 1.0
 
 # 初始化串口通信
 serial_device = serial.Serial(
-    '/dev/tty.Bluetooth-Incoming-Port', 921600, timeout=0.5)
+    '/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
 
 # 创建电机对象
-motor = Motor(DM_Motor_Type.DM4310, SlaveID=0x01, MasterID=0x11)
+motor = Motor(DM_Motor_Type.DM4310, 0x09, 0x99)
 
 # 创建电机控制对象
 motor_control = MotorControl(serial_device)
@@ -66,8 +66,12 @@ motor_control = MotorControl(serial_device)
 motor_control.addMotor(motor)
 
 # 电机初始化
-motor_control.disable(motor)
-motor_control.switchControlMode(motor, Control_Type.POS_VEL)
+
+if motor_control.switchControlMode(motor, Control_Type.Torque_Pos):
+    print("切换到POS_VEL模式成功")
+
+
+motor_control.set_zero_position(motor)
 motor_control.enable(motor)
 
 # 播放音符

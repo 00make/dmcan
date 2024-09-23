@@ -39,8 +39,6 @@ motor_control.controlMIT(motor, kp=0.5, kd=0.1, q=1.0, dq=0.0, tau=0.0)
 # 导入主要的类和枚举
 from .dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type, DM_variable
 
-# 定义版本号
-__version__ = "0.1.0"
 
 # 定义所有可以直接从包中导入的对象
 __all__ = ['Motor', 'MotorControl',

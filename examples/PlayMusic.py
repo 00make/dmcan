@@ -1,4 +1,7 @@
 import time
+from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
+import serial
+
 """
 This script controls a motor to play the melody of "Twinkle Twinkle Little Star" using a serial communication interface.
 
@@ -8,20 +11,18 @@ Modules:
     serial: A module for serial communication.
 
 Constants:
-    note_to_speed (dict): A dictionary mapping musical notes to their corresponding speeds.
+    note_to_frequency (dict): A dictionary mapping musical notes to their corresponding frequencies.
     notes (list): A list of musical notes representing the melody of "Twinkle Twinkle Little Star".
     durations (list): A list of durations for each note in the melody.
     x_speed (float): A multiplier for the speed of the motor.
-    x_duration (float): A multiplier for the duration of each note.
 
 Variables:
     serial_device (serial.Serial): The serial communication interface.
     motor (Motor): The motor object.
     motor_control (MotorControl): The motor control object.
-    current_position (float): The current position of the motor.
 
 Functions:
-    None
+    hz_to_timems(hz): Converts frequency in Hz to time in ms.
 
 Execution:
     1. Initializes the serial communication interface.
@@ -29,62 +30,61 @@ Execution:
     3. Plays the melody by controlling the motor's position and speed according to the notes and durations.
     4. Disables the motor and closes the serial communication interface.
 """
-from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
-import serial
 
-# 音符与速度映射
-note_to_speed = {
-    'C': 100,
-    'D': 200,
-    'E': 300,
-    'F': 400,
-    'G': 500,
-    'A': 600,
-    'B': 700,
-    'C5': 800
+# Mapping of musical notes to their corresponding frequencies
+note_to_frequency = {
+    'C4': 261.63,
+    'D4': 293.66,
+    'E4': 329.63,
+    'F4': 349.23,
+    'G4': 392.00,
+    'A4': 440.00,
+    'B4': 493.88,
+    'C5': 523.25
 }
 
-# 小星星的音符和时长
-notes = ['C', 'C', 'G', 'G', 'A', 'A', 'G', 'F', 'F', 'E', 'E', 'D', 'D', 'C']
+def hz_to_timems(hz):
+    """Converts frequency in Hz to time in ms."""
+    return (float(hz) + 137.85) / 125.438
+
+# Example usage
+hz = 440.00  # A4 note
+timems = hz_to_timems(hz)
+print(f"timems for {hz} Hz: {timems}")
+
+# Notes and durations for "Twinkle Twinkle Little Star"
+notes = ['C4', 'C4', 'G4', 'G4', 'A4', 'A4', 'G4',
+         'F4', 'F4', 'E4', 'E4', 'D4', 'D4', 'C4']
 durations = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1]
 
-# 速度和间隔倍数
-x_speed = 1.0
-x_duration = 1.0
+# Initialize serial communication
+serial_device = serial.Serial('/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
 
-# 初始化串口通信
-serial_device = serial.Serial(
-    '/dev/tty.usbmodem00000000050C1', 921600, timeout=0.5)
-
-# 创建电机对象
-motor = Motor(DM_Motor_Type.DM4310, 0x09, 0x99)
-
-# 创建电机控制对象
+# Initialize motor and motor control
+motor = Motor(DM_Motor_Type.DM4310, 0x02, 0x22)
 motor_control = MotorControl(serial_device)
-
-# 添加电机到控制对象
 motor_control.addMotor(motor)
 
-# 电机初始化
+# Switch to velocity control mode
+if motor_control.switchControlMode(motor, Control_Type.VEL):
+    print("Switched to VEL mode successfully")
 
-if motor_control.switchControlMode(motor, Control_Type.Torque_Pos):
-    print("切换到POS_VEL模式成功")
-
-
+# Set zero position and enable motor
 motor_control.set_zero_position(motor)
 motor_control.enable(motor)
 
-# 播放音符
-current_position = 0.0
+# Speed multiplier
+x_speed = 0.001
+
+# Play the melody
 for note, duration in zip(notes, durations):
-    speed = note_to_speed[note] * x_speed
-    target_position = current_position + speed * duration * x_duration
-    motor_control.control_Pos_Vel(motor, target_position, speed)
-    time.sleep(duration * x_duration)
-    current_position = target_position
+    speed = hz_to_timems(note_to_frequency[note])
+    print(f"Note: {note}, Speed: {speed}, Duration: {duration}")
+    motor_control.control_Vel(motor, speed)
+    time.sleep(duration)
+    motor_control.control_Vel(motor, 0)
+    time.sleep(duration * 0.1)
 
-# 结束控制
+# Disable motor and close serial communication
 motor_control.disable(motor)
-
-# 关闭串口
 serial_device.close()

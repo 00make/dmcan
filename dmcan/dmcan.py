@@ -354,7 +354,7 @@ class MotorControl:
 
     def switchControlMode(self, Motor, ControlMode):
         """
-        切换电机控制模式
+        切换电机控制模式 !!!需要更新固件到V5015以上!!!
         :param Motor: 电机对象
         :param ControlMode: 电机控制模式 (例如: MIT:Control_Type.MIT)
         """

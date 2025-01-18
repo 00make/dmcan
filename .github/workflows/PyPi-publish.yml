@@ -14,9 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2  # 更新到最新版本
     - name: Set up Python 3.7
-      uses: actions/setup-python@v2  # 更新到最新版本
+      uses: actions/setup-python@v4  # 更新到最新版本
       with:
-        python-version: 3.7
+        python-version: 3.9
     - name: Install pypa/build
       run: python -m pip install build --user
     - name: 🔨Build a binary wheel and a source tarball

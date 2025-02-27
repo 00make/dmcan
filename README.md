@@ -2,7 +2,7 @@
 
 这个项目提供了一个用于控制DM系列电机的Python库。它支持多种控制模式,包括MIT模式、位置速度模式、速度模式和转矩位置模式。
 
-### 特性
+## 特性
 
 * 支持多种DM电机型号
 
@@ -26,19 +26,19 @@ pip install dmcan
 
 ### 使用方法
 
-1. 导入必要的模块:
+导入必要的模块:
 
 ```python
 from dmcan import Motor, MotorControl, DM_Motor_Type, Control_Type
 ```
 
-1. 创建电机对象:
+创建电机对象:
 
 ```python
 motor = Motor(DM_Motor_Type.DM4310, SlaveID=0x01, MasterID=0x11)
 ```
 
-1. 创建电机控制对象:
+ 创建电机控制对象:
 
 ```python
 import serial
@@ -46,19 +46,19 @@ ser = serial.Serial('COM8', 921600, timeout=0.5)  # 根据实际情况修改串�
 motor_control = MotorControl(ser)
 ```
 
-1. 添加电机到控制对象:
+添加电机到控制对象:
 
 ```python
 motor_control.addMotor(motor)
 ```
 
-1. 使能电机:
+使能电机:
 
 ```python
 motor_control.enable(motor)
 ```
 
-1. 控制电机:
+ 控制电机:
 
 ```python
 # MIT模式控制

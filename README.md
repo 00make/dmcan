@@ -110,3 +110,7 @@ Issues and pull requests are welcome. For major changes, please open an issue fi
 ### License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details.
+
+### Technical Support
+
+For technical discussions, please contact the author via email: <towardsrwby@gmail.com>

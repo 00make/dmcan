@@ -1,6 +1,6 @@
 # DM Motor Control
 
-This project provides a Python library for controlling DM series motors. It supports multiple control modes, including MIT mode, position-velocity mode, velocity mode, and torque-position mode.
+This project provides a Python library for controlling DM series motors (DM-J4310 etc). It supports multiple control modes, including MIT mode, position-velocity mode, velocity mode, and torque-position mode.
 
 ## Features
 
